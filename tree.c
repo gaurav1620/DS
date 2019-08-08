@@ -21,6 +21,18 @@ int height(node* root){
 	return height(root->r) +1;
 }
 
+node* lca(node*root, int a, int b){
+
+	if(root == NULL) return NULL;
+	if(root->val == a || root->val == b) return root;
+
+	node *le = lca(root->l,a,b);
+	node *ri = lca(root->r,a,b);
+
+	if(le && ri) return root;
+	return le != NULL ?le:ri;
+}
+
 node* newN(int data){
 	node *tmp = (node*)malloc(sizeof(node*));
 	tmp->val = data;
@@ -83,4 +95,5 @@ int main (){
 	prePrint(root);
 	printf("\n");
 	printf("%d",height(root));
+	printf("\n\n%d\n",lca(root,9,11)->val);
 }
