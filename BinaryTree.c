@@ -7,20 +7,16 @@ struct node{
 };
 typedef struct node node;
 
-
-int height(node* root){
-    if(root == NULL){
-        return 0;
+//Func to check weather a tree is a full tree or not (PS A full tree's nodes have either no or two children)
+int check_Whether_Tree_Is_A_Full_Binary_Tree(node* root){
+    if(root->l == NULL && root->r == NULL) return 1;
+    else if(root->l == NULL || root->r == NULL) return 0;
+    else {
+        return check_Whether_Tree_Is_A_Full_Binary_Tree(root->l) && check_Whether_Tree_Is_A_Full_Binary_Tree(root->r)? 1:0;
     }
-    else if(root->l == NULL && root->r ==NULL){
-        return 1;
-    }
-    else if(height(root->l) > height(root->r)){
-        return height(root->l)+1;
-    }
-    return height(root->r) +1;
 }
 
+//This lca is not for BST . as for a BST we can easily get O(h) time for searching any element.
 node* lca(node*root, int a, int b){
 
     if(root == NULL) return NULL;
@@ -42,14 +38,41 @@ node* newN(int data){
     return tmp;
 }
 
+int height(node* root){
+    if(root == NULL){
+        return 0;
+    }
+    else if(root->l == NULL && root->r ==NULL){
+        return 1;
+    }
+    else if(height(root->l) > height(root->r)){
+        return height(root->l)+1;
+    }
+    return height(root->r) +1;
+}
+
+
+
+
 //Left data right
-void prePrint(node* root){
+void inOrderTraversal(node* root){
     if(root == NULL){
         return;
     }
-    prePrint(root->l);
+    inOrderTraversal(root->l);
     printf("%d ",root->val);
-    prePrint(root->r);
+    inOrderTraversal(root->r);
+}
+
+//data left right
+void preOrderTraversal(node* root){
+    if(root == NULL){
+        //printf("EMPTY !!\n");
+        return;
+    }
+    printf("%d ",root->val);
+    preOrderTraversal(root->l);
+    preOrderTraversal(root->r);
 }
 
 int main (){
@@ -77,6 +100,7 @@ int main (){
     //Assignments
     root->l = l1;
     root->r = r1;
+
     l1->l = ll2;
     l1->r = lr2;
     r1->l = rl2;
@@ -92,8 +116,15 @@ int main (){
     rr2->r = rrr3;
 
     //printf("%d",root->l->r->l->val);
-    prePrint(root);
+    preOrderTraversal(root);
     printf("\n");
     printf("%d",height(root));
     printf("\n\n%d\n",lca(root,9,11)->val);
+
+    if(check_Whether_Tree_Is_A_Full_Binary_Tree(root) == 1){
+        printf("\nTree is a Full Binary tree !!\n");
+    }
+    else{
+        printf("\nTree is a NOT Full Binary tree.\n");
+    }
 }
