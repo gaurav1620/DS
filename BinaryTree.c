@@ -1,11 +1,112 @@
 #include<stdio.h>
 #include<stdlib.h>
+
+//Binary tree Node
 struct node{
     int val;
     struct node *l;
     struct node *r;
 };
 typedef struct node node;
+
+//QUEUE node
+struct queue{
+    node* val[100];
+    int size;
+    int front;
+    int back;
+};
+typedef struct queue queue;
+
+
+
+//FUNCTIONS
+
+int check_Whether_Tree_Is_A_Full_Binary_Tree(node* root);
+node* lca(node*root, int a, int b);
+node* newN(int data);
+int height(node* root);
+void inOrderTraversal(node* root);
+void preOrderTraversal(node* root);
+
+
+void levelOrderTraversal(node* root);
+void printLevel(node* root,int level);
+
+void levelOrderTraversalUsingQueue(node* root);
+
+//QUEUE
+queue* initQueue();
+void enqueue(queue* q,node* data);
+node* dequeue(queue* q);
+void printQueue(queue* q);
+
+int main (){
+
+    node *root = newN(1);
+
+    node *l1 = newN(2);
+    node *r1 = newN(3);
+
+
+    node *ll2 = newN(4);
+    node *lr2 = newN(5);
+    node *rl2 = newN(6);
+    node *rr2 = newN(7);
+
+    node *lll3 = newN(8);
+    node *llr3 = newN(9);
+    node *lrl3 = newN(10);
+    node *lrr3 = newN(11);
+    node *rll3 = newN(12);
+    node *rlr3 = newN(13);
+    node *rrl3 = newN(14);
+    node *rrr3 = newN(15);
+
+    //Assignments
+    root->l = l1;
+    root->r = r1;
+
+    l1->l = ll2;
+    l1->r = lr2;
+    r1->l = rl2;
+    r1->r = rr2;
+
+    ll2->l = lll3;
+    ll2->r = llr3;
+    lr2->l = lrl3;
+    lr2->r = lrr3;
+    rl2->l = rll3;
+    rl2->r = rlr3;
+    rr2->l = rrl3;
+    rr2->r = rrr3;
+
+    //printf("%d",root->l->r->l->val);
+/*
+    preOrderTraversal(root);
+    printf("\n");
+    printf("%d",height(root));
+    printf("\n\n%d\n",lca(root,9,11)->val);
+*/
+/*
+    if(check_Whether_Tree_Is_A_Full_Binary_Tree(root) == 1){
+        printf("\nTree is a Full Binary tree !!\n");
+    }
+    else{
+        printf("\nTree is a NOT Full Binary tree.\n");
+    }
+*/
+/*
+    //LEVEL ORDER TRAVERSAL
+    printf("LEVEL ORDER TRAVERSAL!! : \n");
+    levelOrderTraversal(root);
+*/
+
+
+    levelOrderTraversalUsingQueue(root);
+
+}
+
 
 //Func to check weather a tree is a full tree or not (PS A full tree's nodes have either no or two children)
 int check_Whether_Tree_Is_A_Full_Binary_Tree(node* root){
@@ -75,56 +176,90 @@ void preOrderTraversal(node* root){
     preOrderTraversal(root->r);
 }
 
-int main (){
+void printLevel(node* root,int level){
+    if(root == NULL) return ;
+    if(level == 1){
+        printf("%d ",root->val);
+        return;
+    }else{
+        printLevel(root->l,level - 1);
+        printLevel(root->r,level - 1);
+    }
+}
 
-    node *root = newN(1);
+void levelOrderTraversal(node* root){
+    int h = height(root);
+    for(int i = 1 ;i <= h;i++){
+        printLevel(root,i);
+    }
+}
 
-    node *l1 = newN(2);
-    node *r1 = newN(3);
-
-
-    node *ll2 = newN(4);
-    node *lr2 = newN(5);
-    node *rl2 = newN(6);
-    node *rr2 = newN(7);
-
-    node *lll3 = newN(8);
-    node *llr3 = newN(9);
-    node *lrl3 = newN(10);
-    node *lrr3 = newN(11);
-    node *rll3 = newN(12);
-    node *rlr3 = newN(13);
-    node *rrl3 = newN(14);
-    node *rrr3 = newN(15);
-
-    //Assignments
-    root->l = l1;
-    root->r = r1;
-
-    l1->l = ll2;
-    l1->r = lr2;
-    r1->l = rl2;
-    r1->r = rr2;
-
-    ll2->l = lll3;
-    ll2->r = llr3;
-    lr2->l = lrl3;
-    lr2->r = lrr3;
-    rl2->l = rll3;
-    rl2->r = rlr3;
-    rr2->l = rrl3;
-    rr2->r = rrr3;
-
-    //printf("%d",root->l->r->l->val);
-    preOrderTraversal(root);
-    printf("\n");
-    printf("%d",height(root));
-    printf("\n\n%d\n",lca(root,9,11)->val);
-
-    if(check_Whether_Tree_Is_A_Full_Binary_Tree(root) == 1){
-        printf("\nTree is a Full Binary tree !!\n");
+void levelOrderTraversalUsingQueue(node* root){
+    if(root == NULL){
+        return;
     }
     else{
-        printf("\nTree is a NOT Full Binary tree.\n");
+        printf("The level order traversal using queue is : \n");
+        queue* q = initQueue();
+        node* tmp = root;
+
+        while(tmp){
+            printf("%d ",tmp->val);
+
+            if(tmp->l) enqueue(q,tmp->l);
+            if(tmp->r) enqueue(q,tmp->r);
+
+            tmp = dequeue(q);
+        }
+        printf("\n");
     }
+}
+
+//QUEUE
+//   __ _ _   _  __ _ _   _  ___ 
+//  / _` | | | |/ _` | | | |/ _ \
+// | (_| | |_| | (_| | |_| |  __/
+//  \__, |\__,_|\__, |\__,_|\___|
+//     |_|         |_|           
+queue* initQueue(){
+    queue* q = (queue*)malloc(sizeof(queue*));
+    q->size = 0;
+    q->front = -1;
+    q->back = -1;
+    return q;
+}
+void enqueue(queue* q,node* data){
+    if(q->front == -1){
+        q->front = 0;
+        q->back = 0;
+        q->size = 1;
+        q->val[q->back] = data;
+        //printf(" Enqueuing %d \n",q->val[q->back]->val);
+        return;
+    }else{
+        q->size++;
+        q->back++;
+        q->val[q->back] = data;
+        //printf(" Enqueuing %d \n",q->val[q->back]->val);
+        return;
+    }
+}
+
+node* dequeue(queue* q){
+
+    if(q->size == 0)return NULL;
+    else{
+        q->size--;
+        //q->front++;
+        //printf(" Dequeuing %d \n",q->val[q->front]->val);
+        return q->val[q->front++];
+    }
+}
+
+void printQueue(queue* q){
+    printf("QUEUE is as follows : \n");
+    for(int i = q->front;i <= q->back;i++){
+        printf("%d <- ",q->val[i]->val);
+    }
+    printf("\n");
 }
