@@ -30,10 +30,14 @@ void inOrderTraversal(node* root);
 void preOrderTraversal(node* root);
 
 
+
 void levelOrderTraversal(node* root);
 void printLevel(node* root,int level);
 
 void levelOrderTraversalUsingQueue(node* root);
+
+node* constructTreeFromInorderAndPreorder(int arr1[],int arr2[],int l1,int l2);
+
 
 //QUEUE
 queue* initQueue();
@@ -82,12 +86,25 @@ int main (){
     rr2->r = rrr3;
 
     //printf("%d",root->l->r->l->val);
-/*
+
+    printf("preOrderTraversal : ");
     preOrderTraversal(root);
     printf("\n");
-    printf("%d",height(root));
-    printf("\n\n%d\n",lca(root,9,11)->val);
-*/
+    //arr = {1 2 4 8 9 5 10 11 3 6 12 13 7 14 15}
+
+    printf("inOrderTraversal : ");
+    inOrderTraversal(root);
+    printf("\n");
+    //arr = {8 4 9 2 10 5 11 1 12 6 13 3 14 7 15}
+
+    int preArr[] = {1, 2, 4, 8, 9, 5, 10, 11, 3, 6, 12, 13, 7, 14, 15};
+    int inArr[]  = {8, 4, 9, 2, 10, 5, 11, 1, 12, 6, 13, 3, 14, 7, 15};
+
+    inOrderTraversal(constructTreeFromInorderAndPreorder(preArr,inArr,0,14)); 
+
+    // printf("%d",height(root));
+    // printf("\n\n%d\n",lca(root,9,11)->val);
+
 /*
     if(check_Whether_Tree_Is_A_Full_Binary_Tree(root) == 1){
         printf("\nTree is a Full Binary tree !!\n");
@@ -103,7 +120,7 @@ int main (){
 */
 
 
-    levelOrderTraversalUsingQueue(root);
+//    levelOrderTraversalUsingQueue(root);
 
 }
 
@@ -156,12 +173,13 @@ int height(node* root){
 
 
 //Left data right
+static int debugIndex = 0;
 void inOrderTraversal(node* root){
     if(root == NULL){
         return;
     }
     inOrderTraversal(root->l);
-    printf("%d ",root->val);
+    printf("\n%d : %d",debugIndex++,root->val);
     inOrderTraversal(root->r);
 }
 
@@ -213,6 +231,40 @@ void levelOrderTraversalUsingQueue(node* root){
         }
         printf("\n");
     }
+}
+
+
+static int preOrderIndex = 0;
+node* constructTreeFromInorderAndPreorder(int pre[], int in[], int start, int end){
+    // pre arr = {1 2 4 8 9 5 10 11 3 6 12 13 7 14 15}
+    // in  arr = {8 4 9 2 10 5 11 1 12 6 13 3 14 7 15}
+    if(start > end) return NULL;
+    else if(start == end){
+        node* tmp = newN(pre[preOrderIndex]);
+        preOrderIndex++;
+        return tmp;
+    }
+
+    node* tmp = newN(pre[preOrderIndex]);
+    preOrderIndex++;
+    printf("\n\n\nCreated a new Node : %d\n",tmp->val);
+    
+    int currPos;
+    for(int i = start;i < end;i++){
+        if(in[i] == pre[preOrderIndex-1]){
+
+            currPos = i;
+            printf("currElement : %d , curr pos : %d , preOrderIndex : %d\n",in[i],i,preOrderIndex -1);
+            break;
+        } 
+    }
+
+    printf("LEFT : start : %d, end : %d\n\n",start,end- currPos - 1);
+    
+    tmp->l = constructTreeFromInorderAndPreorder(pre, in, start,currPos - 1);
+    printf("RIGHT : start : %d, end : %d\n",start + currPos + 1, end);
+    tmp->r = constructTreeFromInorderAndPreorder(pre, in,currPos + 1, end );
+    return tmp;
 }
 
 //QUEUE
