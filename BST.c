@@ -115,4 +115,5 @@ int main (){
 
     int searchElement = 13; 
     printf("found %d in the above number of \"checkx\"  traversals\n",searchBst(root,searchElement)->val);
+    return 0;
 }
