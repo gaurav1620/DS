@@ -19,6 +19,11 @@ struct queue{
 typedef struct queue queue;
 
 
+            //             1
+            //         2            3
+            //     4      5      6      7
+            // 8    9  10  11  12  13  14  15                         
+
 
 //FUNCTIONS
 
@@ -35,7 +40,9 @@ void levelOrderTraversal(node* root);
 void printLevel(node* root,int level);
 
 void levelOrderTraversalUsingQueue(node* root);
-
+int printAllAncestors(node* root, int searchQuerry);
+int printAllAncestorsWithoutRecurtion(node* root, int searchQuerry);
+int maxWidth(node* root);
 node* constructTreeFromInorderAndPreorder(int arr1[],int arr2[],int l1,int l2);
 
 
@@ -87,20 +94,20 @@ int main (){
 
     //printf("%d",root->l->r->l->val);
 
-    printf("preOrderTraversal : ");
-    preOrderTraversal(root);
-    printf("\n");
-    //arr = {1 2 4 8 9 5 10 11 3 6 12 13 7 14 15}
+    // printf("preOrderTraversal : ");
+    // preOrderTraversal(root);
+    // printf("\n");
+    // //arr = {1 2 4 8 9 5 10 11 3 6 12 13 7 14 15}
 
-    printf("inOrderTraversal : ");
-    inOrderTraversal(root);
-    printf("\n");
+    // printf("inOrderTraversal : ");
+    // inOrderTraversal(root);
+    // printf("\n");
     //arr = {8 4 9 2 10 5 11 1 12 6 13 3 14 7 15}
 
-    int preArr[] = {1, 2, 4, 8, 9, 5, 10, 11, 3, 6, 12, 13, 7, 14, 15};
-    int inArr[]  = {8, 4, 9, 2, 10, 5, 11, 1, 12, 6, 13, 3, 14, 7, 15};
+    // int preArr[] = {1, 2, 4, 8, 9, 5, 10, 11, 3, 6, 12, 13, 7, 14, 15};
+    // int inArr[]  = {8, 4, 9, 2, 10, 5, 11, 1, 12, 6, 13, 3, 14, 7, 15};
 
-    inOrderTraversal(constructTreeFromInorderAndPreorder(preArr,inArr,0,14)); 
+    // inOrderTraversal(constructTreeFromInorderAndPreorder(preArr,inArr,0,14)); 
 
     // printf("%d",height(root));
     // printf("\n\n%d\n",lca(root,9,11)->val);
@@ -121,7 +128,9 @@ int main (){
 
 
 //    levelOrderTraversalUsingQueue(root);
+    // printAllAncestors(root,10);
 
+    printf("%d",maxWidth(root));
 }
 
 
@@ -173,13 +182,13 @@ int height(node* root){
 
 
 //Left data right
-static int debugIndex = 0;
+
 void inOrderTraversal(node* root){
     if(root == NULL){
         return;
     }
     inOrderTraversal(root->l);
-    printf("\n%d : %d",debugIndex++,root->val);
+    printf("%d ",root->val);
     inOrderTraversal(root->r);
 }
 
@@ -233,6 +242,25 @@ void levelOrderTraversalUsingQueue(node* root){
     }
 }
 
+int printAllAncestors(node* root,int searchQuerry){
+    if(! root){
+        return 0;
+    }
+    if(root->val == searchQuerry){
+        printf("%d\n",root->val);
+        return 1;
+    }
+    if(printAllAncestors(root->l,searchQuerry) || printAllAncestors(root->r,searchQuerry)){
+        printf("%d\n",root->val);
+        return 1;
+    }
+    return 0;
+}
+
+int printAllAncestorsWithoutRecurtion(node* root, int searchQuerry){
+    return 0;
+}
+
 
 static int preOrderIndex = 0;
 node* constructTreeFromInorderAndPreorder(int pre[], int in[], int start, int end){
@@ -265,6 +293,45 @@ node* constructTreeFromInorderAndPreorder(int pre[], int in[], int start, int en
     printf("RIGHT : start : %d, end : %d\n",start + currPos + 1, end);
     tmp->r = constructTreeFromInorderAndPreorder(pre, in,currPos + 1, end );
     return tmp;
+}
+
+int maxWidth(node* root){
+    queue* q = initQueue();
+    node* tmp = root;
+    int max = 0;
+
+    if(tmp)enqueue(q,tmp);
+    else return 0;
+    while(q->size > 0){
+        printf("Check 1\n");
+
+        if(q->size > max)max = q->size;
+
+        queue* newQ = initQueue();
+        while(q->size > 0){
+            printf("Elliot \n");
+            printf("queue size : %d\n",q->size);
+
+            node* tt = dequeue(q);
+
+            printf("%d\n",tt->val);
+            printf("Elliot 2\n");
+            printf("Check 2 :%d\n",tt->val);
+            if(tt->l){
+                enqueue(newQ,tt->l);
+                printf("\tAdding : %d\n",tt->l->val);
+            }
+            if(tt->r){
+                enqueue(newQ,tt->r);
+                printf("\tAdding : %d\n",tt->r->val);
+            }
+            printf("Anderson\n");
+        } 
+        printf("Check 3\n");
+        q = newQ;
+        printQueue(q);      
+    }
+    return max;
 }
 
 //QUEUE
@@ -310,6 +377,7 @@ node* dequeue(queue* q){
 
 void printQueue(queue* q){
     printf("QUEUE is as follows : \n");
+
     for(int i = q->front;i <= q->back;i++){
         printf("%d <- ",q->val[i]->val);
     }
